@@ -1,24 +1,27 @@
 package User;
 
-import java.util.List;
+import java.util.Map;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import DB.QueryExecutor;
 
 public class UserDB {
-	static List<User> users = new ArrayList<User>();
-	
 	private Integer id;
 	private String username;
 	private String password;
 	private String email;
+	static Map<Integer, User> users = new HashMap<Integer, User>();
 
 	public UserDB() {
-		try {
-			ResultSet result = QueryExecutor.executeSelect("Select * from food_app.user");
+		updateUsers();
+	}
 
+	public void updateUsers() {
+		ResultSet result = QueryExecutor.executeSelect("Select * from food_app.user");
+		users.clear();
+		try {
 			while (result.next()) {
 				User user = new User();
 				id = result.getInt("ID");
@@ -30,11 +33,32 @@ public class UserDB {
 				user.setUsername(username);
 				user.setPassword(password);
 				user.setEmail(email);
-				users.add(user);
-
+				users.put(user.getId(), user);
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
+	}
+
+	public static User findById(Integer id) {
+		new UserDB();
+		User user = users.get(id);
+		return user;
+	}
+
+	private static boolean isExist(Integer id) {
+		if (findById(id) == null) {
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isDeleteById(Integer id) {
+		boolean isExist = isExist(id);
+		if (isExist) {
+			QueryExecutor.executeQuery("Delete from food_app.user where id = " + id);
+			return true;
+		}
+		return false;
 	}
 }
