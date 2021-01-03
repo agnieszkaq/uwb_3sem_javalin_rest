@@ -12,7 +12,7 @@ public class UserDB {
 	private String username;
 	private String password;
 	private String email;
-	static Map<Integer, User> users = new HashMap<Integer, User>();
+	static Map<String, User> users = new HashMap<String, User>();
 
 	public UserDB() {
 		updateUsers();
@@ -33,32 +33,46 @@ public class UserDB {
 				user.setUsername(username);
 				user.setPassword(password);
 				user.setEmail(email);
-				users.put(user.getId(), user);
+				users.put(user.getId().toString(), user);
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
 	}
 
-	public static User findById(Integer id) {
+	public static User findById(String id) {
 		new UserDB();
 		User user = users.get(id);
 		return user;
 	}
 
-	private static boolean isExist(Integer id) {
+	public static void deleteById(String id) {
+		QueryExecutor.executeQuery("Delete from food_app.user where id = " + id);
+	}
+
+	public static boolean isExist(String id) {
 		if (findById(id) == null) {
 			return false;
 		}
 		return true;
 	}
 
-	public static boolean isDeleteById(Integer id) {
-		boolean isExist = isExist(id);
-		if (isExist) {
-			QueryExecutor.executeQuery("Delete from food_app.user where id = " + id);
-			return true;
+	public static boolean isExistByUsername(String username) {
+		new UserDB();
+		boolean isExist = false;
+
+		for (User user : users.values()) {
+			System.out.println(user.getUsername() + " " + username);
+			if (user.getUsername().equals(username)) {
+				isExist = true;
+			}
 		}
-		return false;
+		return isExist;
 	}
+
+	public static void create(String username, String password, String email) {
+		QueryExecutor.executeQuery("INSERT INTO food_app.user (username, password, email) VALUES ('" + username + "','"
+				+ password + "','" + email + "')");
+	}
+
 }
