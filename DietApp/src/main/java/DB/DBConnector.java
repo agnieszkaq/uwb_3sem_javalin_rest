@@ -13,7 +13,6 @@ public class DBConnector {
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASSWORD);
-			System.out.println("Database connected!");
 		} catch (SQLException e) {
 			System.err.println(e);
 		}

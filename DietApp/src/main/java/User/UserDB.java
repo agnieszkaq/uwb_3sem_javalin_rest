@@ -46,10 +46,6 @@ public class UserDB {
 		return user;
 	}
 
-	public static void deleteById(String id) {
-		QueryExecutor.executeQuery("Delete from food_app.user where id = " + id);
-	}
-
 	public static boolean isExist(String id) {
 		if (findById(id) == null) {
 			return false;
@@ -62,7 +58,6 @@ public class UserDB {
 		boolean isExist = false;
 
 		for (User user : users.values()) {
-			System.out.println(user.getUsername() + " " + username);
 			if (user.getUsername().equals(username)) {
 				isExist = true;
 			}
@@ -70,9 +65,17 @@ public class UserDB {
 		return isExist;
 	}
 
+	public static void deleteById(String id) {
+		QueryExecutor.executeQuery("Delete from food_app.user where id = " + id);
+	}
+
 	public static void create(String username, String password, String email) {
 		QueryExecutor.executeQuery("INSERT INTO food_app.user (username, password, email) VALUES ('" + username + "','"
 				+ password + "','" + email + "')");
 	}
 
+	public static void update(String id, String username, String password, String email) {
+		QueryExecutor.executeQuery("Update food_app.user SET username = '" + username + "', password = '" + password
+				+ "', email = '" + email + "' where id = " + id);
+	}
 }
